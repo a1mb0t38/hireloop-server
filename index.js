@@ -35,7 +35,7 @@ async function run() {
         const db = client.db("hireloop");
         const jobCollection = db.collection("jobs");
 
-        app.post('/addjob', async (req, res) => {
+        app.post('/api/jobs', async (req, res) => {
             const job = req.body;
             const result = await jobCollection.insertOne(job);
             res.send(result);
