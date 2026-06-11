@@ -20,37 +20,42 @@ const uri = process.env.MONGO_URI
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
 });
 
 async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    const db = client.db("hireloop");
+    try {
+        // Connect the client to the server	(optional starting in v4.7)
+        await client.connect();
+        // Send a ping to confirm a successful connection
+        const db = client.db("hireloop");
+        const jobCollection = db.collection("jobs");
+
+        app.post('/addjob', async (req, res) => {
+            const job = req.body;
+            const result = await jobCollection.insertOne(job);
+            res.send(result);
+        })
 
 
-
-
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } catch (err) {
-    console.error("Error connecting to MongoDB:", err);
-  }
+        await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    } catch (err) {
+        console.error("Error connecting to MongoDB:", err);
+    }
 }
 run().catch(console.dir);
 
 
 
 app.get('/', (req, res) => {
-  res.send('Server is running!')
+    res.send('Server is running!')
 })
 
 app.listen(port, () => {
-  console.log(`the server is running on port ${port}`)
+    console.log(`the server is running on port ${port}`)
 })
